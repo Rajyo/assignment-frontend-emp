@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Edit2, Trash2, Loader2, RefreshCw } from "lucide-react";
@@ -11,13 +11,11 @@ import debounce from "../utils/debounce";
 const UserList: React.FC = () => {
   const navigate = useNavigate();
   const [users, setLocalUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  console.log(users);
 
   // Fetch users
   const fetchUsers = async () => {
@@ -44,7 +42,6 @@ const UserList: React.FC = () => {
     }
   }, [currentPage]);
 
-
   // Search(Debounced)
   const debouncedSearch = useCallback(
     debounce((term: string) => {
@@ -64,7 +61,6 @@ const UserList: React.FC = () => {
     debouncedSearch(searchTerm);
   }, [searchTerm, debouncedSearch]);
 
-
   // Handle delete
   const handleDelete = async (id: number) => {
     setLoadingDelete(true);
@@ -80,6 +76,27 @@ const UserList: React.FC = () => {
     }
   };
 
+  // Ref
+  const ref = useRef<HTMLInputElement | null>(null);
+
+  // Handle click outside
+  const onClickOutside = () => {
+    setSearchTerm("");
+  };
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node | null)) {
+        onClickOutside();
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [onClickOutside]);
+
   return (
     <div className="bg-gray-50 sm:p-6 p-3">
       {/* Header (SEARCH + REFRESH DATA) */}
@@ -88,6 +105,7 @@ const UserList: React.FC = () => {
         <div className="flex items-center gap-4 rounded-xl shadow-lg max-w-4xl relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
+            ref={ref}
             type="text"
             placeholder="Search users..."
             value={searchTerm}
@@ -108,10 +126,17 @@ const UserList: React.FC = () => {
       {/* Users DATA */}
       <div className="bg-white rounded-xl shadow-lg p-6 mb-8 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading ? (
+          {loading && users.length === 0 ? (
             // Loader
             <div className="col-span-3 flex justify-center items-center sm:my-40 my-20">
               <Loader2 className="animate-spin text-indigo-500 sm:w-36 sm:h-36 w-10 h-10" />
+            </div>
+          ) : !loading && users.length === 0 ? (
+            // No Users Found
+            <div className="col-span-3 flex justify-center items-center sm:my-40 my-20">
+              <h1 className="sm:text-5xl tracking-tight text-2xl font-semibold text-red-500">
+                No User Found
+              </h1>
             </div>
           ) : (
             // User Cards
@@ -163,7 +188,7 @@ const UserList: React.FC = () => {
           )}
         </div>
 
-          {/* Pagination */}
+        {/* Pagination */}
         <div className="flex justify-center mt-8 gap-4">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
