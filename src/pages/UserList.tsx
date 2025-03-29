@@ -32,7 +32,12 @@ const UserList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    const localUsers = getLocalUsers();
+    if (localUsers.length === 0) {
+      fetchUsers();
+    } else {
+      setLocalUsers(localUsers);
+    }
   }, [currentPage]);
 
   const debouncedSearch = useCallback(
