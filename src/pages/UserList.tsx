@@ -13,13 +13,13 @@ const UserList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(2);
 
   // Fetch users
-  const fetchUsers = async () => {
+  const fetchUsers = async (index=1) => {
     setLoading(true);
     try {
-      const response = await getUsersApi(currentPage);
+      const response = await getUsersApi(index);
       setUsers(response.data);
       setLocalUsers(response.data);
       setTotalPages(response.total_pages);
@@ -99,7 +99,7 @@ const UserList: React.FC = () => {
         </div>
         {/* REFRESH DATA */}
         <button
-          onClick={fetchUsers}
+          onClick={() => fetchUsers(currentPage)}
           className="flex items-center gap-2 sm:px-4 px-2 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200"
         >
           <RefreshCw className="w-4 h-4" />
@@ -137,9 +137,9 @@ const UserList: React.FC = () => {
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i + 1}
-              onClick={() => setCurrentPage(i + 1)}
+              onClick={() => fetchUsers(i + 1)}
               className={`px-4 py-2 rounded-lg ${
-                currentPage === i + 1
+                i === i + 1
                   ? "bg-indigo-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
