@@ -1,4 +1,5 @@
-// Types
+// Interfaces
+
 export interface User {
   id: number;
   email: string;
@@ -6,6 +7,16 @@ export interface User {
   last_name: string;
   avatar: string;
 }
+
+export interface UserCardProps {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  avatar: string; 
+  setLocalUsers: React.Dispatch<React.SetStateAction<User[]>>;
+}
+
 
 export interface LoginCredentials {
   email: string;
