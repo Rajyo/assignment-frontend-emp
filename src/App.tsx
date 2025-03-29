@@ -11,11 +11,16 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         <Toaster position="top-right" />
         <Routes>
+          {/* Public routes */}
           <Route path="/login" element={<Login />} />
+
+          {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/users" element={<UserList />} />
             <Route path="/edit/:id" element={<EditUser />} />
           </Route>
+          
+          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

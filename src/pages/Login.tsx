@@ -1,36 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { LogIn, User } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { login } from '../api';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { LogIn, User } from "lucide-react";
+import toast from "react-hot-toast";
+import { login } from "../api";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: 'eve.holt@reqres.in',
-    password: 'cityslicka',
+    email: "eve.holt@reqres.in",
+    password: "cityslicka",
   });
 
-  useEffect(() => { 
+  // Redirect to /users if user is already logged in
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       navigate("/users");
     }
   }, []);
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       const response = await login(formData);
-      localStorage.setItem('token', response.token);
-      toast.success('Login successful!');
-      navigate('/users');
+      localStorage.setItem("token", response.token);
+      toast.success("Login successful!");
+      navigate("/users");
     } catch (error) {
-      toast.error('Invalid credentials');
+      toast.error("Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -38,6 +40,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-600">
+      {/* Left section - (IMAGE) */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -76,15 +79,17 @@ const Login: React.FC = () => {
           </motion.p>
         </div>
       </motion.div>
+
+      {/* Right section - (FORM) */}
       <div className="w-full lg:w-1/2 flex items-center justify-center sm:p-8 p-3 lg:p-16">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="max-w-md w-full"
         >
           <div className="text-center">
-            <motion.div 
+            <motion.div
               className="flex justify-center"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -94,7 +99,7 @@ const Login: React.FC = () => {
                 <User className="h-12 w-12 text-white" />
               </div>
             </motion.div>
-            <motion.h2 
+            <motion.h2
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -102,7 +107,7 @@ const Login: React.FC = () => {
             >
               Welcome back
             </motion.h2>
-            <motion.p 
+            <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -111,7 +116,9 @@ const Login: React.FC = () => {
               Sign in to manage your team members
             </motion.p>
           </div>
-          <motion.form 
+
+          {/* Form */}
+          <motion.form
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
@@ -120,7 +127,10 @@ const Login: React.FC = () => {
           >
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-white">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-white"
+                >
                   Email address
                 </label>
                 <motion.input
@@ -131,11 +141,16 @@ const Login: React.FC = () => {
                   className="mt-1 block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-white">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-white"
+                >
                   Password
                 </label>
                 <motion.input
@@ -146,7 +161,9 @@ const Login: React.FC = () => {
                   className="mt-1 block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -162,7 +179,11 @@ const Login: React.FC = () => {
                 <div className="flex items-center">
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
                     className="h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"
                   />
                   Signing in...

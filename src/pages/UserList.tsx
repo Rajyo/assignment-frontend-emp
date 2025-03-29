@@ -17,6 +17,9 @@ const UserList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  console.log(users);
+
+  // Fetch users
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -31,6 +34,7 @@ const UserList: React.FC = () => {
     }
   };
 
+  // Fetch users on page change
   useEffect(() => {
     const localUsers = getLocalUsers();
     if (localUsers.length === 0) {
@@ -40,6 +44,8 @@ const UserList: React.FC = () => {
     }
   }, [currentPage]);
 
+
+  // Search(Debounced)
   const debouncedSearch = useCallback(
     debounce((term: string) => {
       const filteredUsers = getLocalUsers().filter(
@@ -53,10 +59,13 @@ const UserList: React.FC = () => {
     []
   );
 
+  // Handle search
   useEffect(() => {
     debouncedSearch(searchTerm);
   }, [searchTerm, debouncedSearch]);
 
+
+  // Handle delete
   const handleDelete = async (id: number) => {
     setLoadingDelete(true);
     try {
@@ -73,7 +82,9 @@ const UserList: React.FC = () => {
 
   return (
     <div className="bg-gray-50 sm:p-6 p-3">
+      {/* Header (SEARCH + REFRESH DATA) */}
       <div className="flex justify-between items-center bg-gray-200 sticky top-[5rem] sm:top-[5.5rem] sm:p-6 py-6 gap-x-2 px-3 max-w-6xl mx-auto z-10">
+        {/* Search */}
         <div className="flex items-center gap-4 rounded-xl shadow-lg max-w-4xl relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -84,6 +95,7 @@ const UserList: React.FC = () => {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
+        {/* REFRESH DATA */}
         <button
           onClick={fetchUsers}
           className="flex items-center gap-2 sm:px-4 px-2 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200"
@@ -93,13 +105,16 @@ const UserList: React.FC = () => {
         </button>
       </div>
 
+      {/* Users DATA */}
       <div className="bg-white rounded-xl shadow-lg p-6 mb-8 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
+            // Loader
             <div className="col-span-3 flex justify-center items-center sm:my-40 my-20">
               <Loader2 className="animate-spin text-indigo-500 sm:w-36 sm:h-36 w-10 h-10" />
             </div>
           ) : (
+            // User Cards
             <AnimatePresence>
               {users.map((user) => (
                 <motion.div
@@ -148,6 +163,7 @@ const UserList: React.FC = () => {
           )}
         </div>
 
+          {/* Pagination */}
         <div className="flex justify-center mt-8 gap-4">
           {Array.from({ length: totalPages }, (_, i) => (
             <button

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// User Schema
 export const userSchema = z.object({
   first_name: z
     .string()
